@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="co.edu.udea.driveme.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/linear_principal"
+        android:background="@drawable/patronrepeat">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Control Shield Bot"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center_horizontal"
+            android:textSize="30dp"
+            android:textStyle="bold"/>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="•"
+        android:id="@+id/andando"
+        android:layout_weight="1"
+        android:gravity="center_horizontal|center_vertical"
+        android:textColor="#00f51d"
+        android:textSize="100dp"/>
+
+    <ImageView
+        android:id="@+id/image"
+        android:src="@drawable/shieldbot"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="•"
+        android:id="@+id/parado"
+        android:layout_weight="1"
+        android:gravity="center_horizontal|center_vertical"
+        android:textColor="#ff0000"
+        android:textSize="100dp"/>
+</LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="(0 , 0)"
+        android:id="@+id/txt_dataL"
+        android:layout_gravity="center_horizontal"/>
+
+    <joystick.JoystickView
+        android:id="@+id/joystickView"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="170dp"
+        android:layout_height="170dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center_horizontal"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:id="@+id/name"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textSize="20dp"
+        android:id="@+id/mac" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#b4252525"
+        android:weightSum="1"
+        android:id="@+id/envoltorio"
+        android:onClick="nothing"
+        android:clickable="true">
+
+        <TextView
+            android:layout_width="317dp"
+            android:layout_height="wrap_content"
+            android:text="Seleccione un dispositivo Bluetooth, por favor."
+            android:id="@+id/tvEnvuelto"
+            android:textColor="#ffffff"
+            android:textSize="26dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_horizontal"
+            android:layout_weight="0.91"
+            android:layout_below="@+id/flechita"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="➚"
+            android:id="@+id/flechita"
+            android:textSize="80dp"
+            android:textColor="#ffffff"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="-20dp" />
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/progressBar"
+            android:visibility="gone"
+            android:layout_below="@+id/tvEnvuelto"
+            android:layout_centerHorizontal="true"
+            android:indeterminate="false" />
+    </RelativeLayout>
+</RelativeLayout>
