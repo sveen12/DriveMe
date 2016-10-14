@@ -22,53 +22,75 @@
             android:layout_gravity="center_horizontal"
             android:textSize="30dp"
             android:textStyle="bold"/>
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="•"
-        android:id="@+id/andando"
-        android:layout_weight="1"
-        android:gravity="center_horizontal|center_vertical"
-        android:textColor="#00f51d"
-        android:textSize="100dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="•"
+                android:id="@+id/andando"
+                android:layout_weight="1"
+                android:gravity="center_horizontal|center_vertical"
+                android:textColor="#00f51d"
+                android:textSize="100dp"/>
 
-    <ImageView
-        android:id="@+id/image"
-        android:src="@drawable/shieldbot"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:layout_weight="1"/>
+            <ImageView
+                android:id="@+id/image"
+                android:src="@drawable/shieldbot"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="•"
-        android:id="@+id/parado"
-        android:layout_weight="1"
-        android:gravity="center_horizontal|center_vertical"
-        android:textColor="#ff0000"
-        android:textSize="100dp"/>
-</LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="•"
+                android:id="@+id/parado"
+                android:layout_weight="1"
+                android:gravity="center_horizontal|center_vertical"
+                android:textColor="#ff0000"
+                android:textSize="100dp"/>
+        </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Distania"
+            android:id="@+id/txt_distancia"
+            android:layout_gravity="center_horizontal"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="(0 , 0)"
-        android:id="@+id/txt_dataL"
-        android:layout_gravity="center_horizontal"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Temperatura"
+            android:id="@+id/txt_temperatura"
+            android:layout_gravity="center_horizontal"/>
 
-    <joystick.JoystickView
-        android:id="@+id/joystickView"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="170dp"
-        android:layout_height="170dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Humedad"
+            android:id="@+id/txt_humedad"
+            android:layout_gravity="center_horizontal"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="(0 , 0)"
+            android:id="@+id/txt_dataL"
+            android:layout_gravity="center_horizontal"/>
+
+        <joystick.JoystickView
+            android:id="@+id/joystickView"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="170dp"
+            android:layout_height="170dp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -77,12 +99,12 @@
             android:textSize="20dp"
             android:textStyle="bold"
             android:id="@+id/name"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textSize="20dp"
-        android:id="@+id/mac" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textSize="20dp"
+            android:id="@+id/mac" />
 
     </LinearLayout>
 

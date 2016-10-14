@@ -47,10 +47,10 @@ public class ConnectedThread extends Thread  {
         //keep looping to liten for received messages
         while(true){
             try{
-                bytes= mis.read(buffer);
+                bytes= mis.read(buffer); //lee los bytes del adapter
                 String readMessage = new String(buffer, 0, bytes);
                 //send the obtained bytes via handler
-                //handler.obtainMessage(0,bytes,-1,readMessage).sendToTarget();
+                handler.obtainMessage(0,bytes,-1,readMessage).sendToTarget();
             }catch (IOException e){
                 break;
             }

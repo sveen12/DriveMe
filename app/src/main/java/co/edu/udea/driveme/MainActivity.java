@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -23,9 +22,7 @@ import android.widget.Toast;
 
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,11 +30,11 @@ import bluetooth.ConnectedThread;
 import joystick.JoystickMovedListener;
 import joystick.JoystickView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener,DeviceListDialog.RecibirDatos {
 
     private final int DURATION = 150;
     private JoystickView mJoystick;
-    private TextView mTxtDataL;
+    //private TextView mTxtDataL;
     private boolean mCenterL = true;
     private double mRadiusL = 0;
     private double mAngleL = 0;
@@ -46,32 +43,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private BluetoothSocket btSocket = null;
     private ConnectedThread connectedThread;
     private ImageView imageView;
-    public TextView andando, parado, flechita;
+    public TextView andando, parado, flechita,txt_envoltorio, mTxtDataL, txt_temperatura, txt_distancia, txt_humedad ;
     public static List<String> dispositivos;
     RelativeLayout relativeLayout;
     //SPP UUID service
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     //Aquí se guardara la dirección MAC
     private static String address = null;
-    public TextView txt_envoltorio;
+    //public TextView txt_envoltorio;
     public ProgressBar progressBar;
+
+    private StringBuilder recDataString = new StringBuilder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        relativeLayout = (RelativeLayout) findViewById(R.id.envoltorio);
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
-        mJoystick = (JoystickView) findViewById(R.id.joystickView);
-        mTxtDataL = (TextView) findViewById(R.id.txt_dataL);
-        mJoystick.setOnJostickMovedListener(_listenerLeft);
-        mJoystick.setAutoReturnToCenter(true);
-        imageView = (ImageView) findViewById(R.id.image);
-        andando = (TextView) findViewById(R.id.andando);
-        parado = (TextView) findViewById(R.id.parado);
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
-        dispositivos = new ArrayList<String>();
-        txt_envoltorio = (TextView)findViewById(R.id.tvEnvuelto);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+        encontrarGraficos();
+
+
+        read();
 
 
         //Se ponen los marcadores de movimiento en la posición inicial
@@ -85,6 +79,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         this.registerReceiver(BTReceiver, filter1);
         checkBTState();
+    }
+
+    public void encontrarGraficos(){
+        relativeLayout = (RelativeLayout) findViewById(R.id.envoltorio);
+        mJoystick = (JoystickView) findViewById(R.id.joystickView);
+        mTxtDataL = (TextView) findViewById(R.id.txt_dataL);
+        mJoystick.setOnJostickMovedListener(_listenerLeft);
+        mJoystick.setAutoReturnToCenter(true);
+        imageView = (ImageView) findViewById(R.id.image);
+        andando = (TextView) findViewById(R.id.andando);
+        parado = (TextView) findViewById(R.id.parado);
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        dispositivos = new ArrayList<String>();
+        txt_envoltorio = (TextView)findViewById(R.id.tvEnvuelto);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        txt_distancia=(TextView) findViewById(R.id.txt_distancia);
+        txt_humedad=(TextView) findViewById(R.id.txt_humedad);
+        txt_temperatura = (TextView) findViewById(R.id.txt_temperatura);
+
     }
 
     private JoystickMovedListener _listenerLeft = new JoystickMovedListener() {
@@ -196,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onDestroy() {
         unregisterReceiver(BTReceiver);
+        cerrrarConexion();
 
         super.onDestroy();
     }
@@ -203,6 +217,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
+
+        connectDevice();
+        read();
+
+
+        /*
 
         address = getIntent().getStringExtra(DeviceListDialog.EXTRA_DEVICE_ADDRESS);
 
@@ -227,14 +247,71 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // Se establece la conexión Bluetooth por medio del Socket
             try {
                 btSocket.connect();
-                System.out.println(btSocket.isConnected());
+                DEVICE_CONNECTED=true;
+                System.out.println("El socket se conecta: "+btSocket.isConnected());
+
             } catch (IOException e) {
                 try {
                     btSocket.close();
-                    System.out.println("Error");
+                    DEVICE_CONNECTED=false;
+
+                    System.out.println("Trato de conectarme pero Error");
+                    Toast.makeText(this, "No se ha podido vincular al Dispositivo seleccionado",Toast.LENGTH_LONG);
                 } catch (IOException e2) {
+                    DEVICE_CONNECTED=false;
+
                     System.out.println("Error del error");
                 }
+            }
+            connectedThread = new ConnectedThread(btSocket, bluetoothIn);
+            connectedThread.start();
+
+            //Se manda un dato de prueba para saber si se hizo la conexión correctamente
+            connectedThread.write(9);
+        } else {
+            Toast.makeText(this, "Debe seleccionar un dispositivo\n bluetooth primero.", Toast.LENGTH_SHORT).show();
+        }*/
+    }
+    public void connectDevice(){
+
+
+        //address = getIntent().getStringExtra(DeviceListDialog.EXTRA_DEVICE_ADDRESS);
+
+        if (address != null) {
+            relativeLayout = (RelativeLayout) findViewById(R.id.envoltorio);
+            relativeLayout.setVisibility(View.GONE);
+
+
+            TextView t = (TextView) findViewById(R.id.mac);
+            TextView y = (TextView) findViewById(R.id.name);
+            BluetoothDevice device = btAdapter.getRemoteDevice(address);
+
+            t.setText(address);
+
+            try {
+                btSocket = createBluetoothSocket(device);
+                y.setText(btSocket.getRemoteDevice().getName());
+            } catch (IOException e) {
+                Toast.makeText(getBaseContext(), "La creacción del Socket fallo", Toast.LENGTH_LONG).show();
+            }
+
+            // Se establece la conexión Bluetooth por medio del Socket
+            try {
+                btSocket.connect();
+                System.out.println("El socket se conecta: "+btSocket.isConnected());
+
+            } catch (IOException e) {
+                cerrrarConexion();
+                /*
+                try {
+                    btSocket.close();
+
+                    System.out.println("Trato de conectarme pero Error");
+                    Toast.makeText(this, "No se ha podido vincular al Dispositivo seleccionado",Toast.LENGTH_LONG).show();
+                } catch (IOException e2) {
+                    Toast.makeText(this, "No se ha podido vincular al Dispositivo seleccionado",Toast.LENGTH_LONG).show();
+                    System.out.println("Error del error");
+                }*/
             }
             connectedThread = new ConnectedThread(btSocket, bluetoothIn);
             connectedThread.start();
@@ -336,4 +413,81 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
     }
 
+    public void read(){
+        bluetoothIn = new Handler() {
+            public void handleMessage(android.os.Message msg) {
+                if (msg.what == 0) {                                     //if message is what we want
+                    String readMessage = (String) msg.obj;                                                                // msg.arg1 = bytes from connect thread
+                    recDataString.append(readMessage);                                      //keep appending to string until ~
+
+                    //esto fue lo que hice
+                    //String lale =(String) msg.obj;
+                    //String[] variables = lale.split("~");
+                    //System.out.println("la lechuza   "+ lale );
+                    //int tamanio = variables.length;
+                    //System.out.println("Pesa tanto   " +  tamanio);
+
+                    int endOfLineIndex = recDataString.indexOf("\n");                    // determine the end-of-line
+                    if (endOfLineIndex > 0) {                                           // make sure there data before ~
+                    //if(tamanio>0){
+                        String dataInPrint = recDataString.substring(0, endOfLineIndex);    // extract string
+                        String[] variables = dataInPrint.split("~");
+                        txt_distancia.setText(variables[0]);
+
+                        if(!"".equals(variables[1])) {
+                            txt_temperatura.setText(variables[1]);
+                            txt_humedad.setText(variables[2]);
+                        }else{
+                            txt_temperatura.setText("Error al leer la temperatura");
+                            txt_humedad.setText("Error al leer la humedad");
+                        }
+
+
+
+                        /*
+                        String dataInPrint = recDataString.substring(0, endOfLineIndex);    // extract string
+                        txtString.setText("Data Received = " + dataInPrint);
+                        int dataLength = dataInPrint.length();                          //get length of data received
+                        txtStringLength.setText("String Length = " + String.valueOf(dataLength));
+
+                        if (recDataString.charAt(0) == '#')                             //if it starts with # we know it is what we are looking for
+                        {
+                            String sensor0 = recDataString.substring(1, 5);             //get sensor value from string between indices 1-5
+                            String sensor1 = recDataString.substring(6, 10);            //same again...
+                            String sensor2 = recDataString.substring(11, 15);
+                            String sensor3 = recDataString.substring(16, 20);
+
+                            sensorView0.setText(" Sensor 0 Voltage = " + sensor0 + "V");    //update the textviews with sensor values
+                            sensorView1.setText(" Sensor 1 Voltage = " + sensor1 + "V");
+                            sensorView2.setText(" Sensor 2 Voltage = " + sensor2 + "V");
+                            sensorView3.setText(" Sensor 3 Voltage = " + sensor3 + "V");
+                        }*/
+                        recDataString.delete(0, recDataString.length());                    //clear all string data
+                        // strIncom =" ";
+                        dataInPrint = " ";
+                    }
+                }
+            }
+        };
+    }
+
+    @Override
+    public void deviceMac(String address) {
+       cerrrarConexion();
+        this.address=address;
+        connectDevice();
+
+    }
+    public boolean cerrrarConexion(){
+        try {
+            btSocket.close();
+            return true;
+        } catch (IOException e){
+            e.printStackTrace();
+            System.out.println("trato de cerrarlo en el dialog");
+        }catch (NullPointerException nu ){
+            System.out.println("trato de cerrarlo en el dialog pero soy nulo");
+        }
+        return false;
+    }
 }

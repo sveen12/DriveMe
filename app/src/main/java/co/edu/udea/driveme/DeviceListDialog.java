@@ -1,5 +1,6 @@
 package co.edu.udea.driveme;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -44,22 +45,48 @@ public class DeviceListDialog extends DialogFragment {
     private BluetoothAdapter mBtAdapter;
     public static ArrayAdapter mPairedDevicesArrayAdapter;
 
+    public interface RecibirDatos{
+        public void deviceMac(String address);
+    }
+    RecibirDatos recibirDatos;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try{
+            recibirDatos = (RecibirDatos) activity;
+        }catch (ClassCastException e){
+            throw new ClassCastException(activity.toString() + " must implement Recibir Datos");
+        }
+    }
+
     // Set up on-click listener for the list (nicked this - unsure)
      private AdapterView.OnItemClickListener mDeviceClickListener = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView av, View v, int arg2, long arg3) {
-            v.setBackgroundColor(Color.parseColor("#CC666666"));
 
+
+            /*
             textView1.setText("Conectando...");
-            // Get the device MAC address, which is the last 17 chars in the View
-            String info = ((TextView) v).getText().toString();
-            String address = info.substring(info.length() - 17);
+
 
             // Make an intent to start next activity while taking an extra which is the MAC address.
             //MainActivity.EXTRA_DEVICE_ADDRESS = address;
-            Intent i = new Intent(getActivity(), MainActivity.class);
-            i.putExtra(EXTRA_DEVICE_ADDRESS, address);
-            getActivity().finish();
-            startActivity(i);
+            if (MainActivity.DEVICE_CONNECTED==true) {*/
+                v.setBackgroundColor(Color.parseColor("#CC666666"));
+                // Get the device MAC address, which is the last 17 chars in the View
+
+                String info = ((TextView) v).getText().toString();
+                String address = info.substring(info.length() - 17);
+            recibirDatos.deviceMac(address);
+            dismiss();
+            /*
+                Intent i = new Intent(getActivity(), MainActivity.class);
+                i.putExtra(EXTRA_DEVICE_ADDRESS, address);
+                getActivity().finish();
+                startActivity(i);
+            }else {
+                textView1.setText("Error de conexión");
+            }*/
         }
     };
 
