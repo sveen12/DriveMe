@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="20dp"
     android:background="#a95e5e5e">
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,15 +14,40 @@
         android:orientation="horizontal"
         android:background="#666"
         android:weightSum="1">
+
+
         <TextView android:id="@+id/title_paired_devices"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20dp"
-            android:text="Seleccione un dispositivo."
+            android:text="Dispositivos"
             android:layout_gravity="center_vertical"
             android:visibility="gone"
             android:textColor="#fff"
             android:paddingLeft="5dp"/>
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:visibility="gone"
+            android:id="@+id/progressBarDialog"
+            android:layout_below="@+id/tvEnvuelto"
+            android:layout_centerHorizontal="true"
+            android:indeterminate="false" />
+
+        <CheckBox
+            android:text="Ver MAC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cbMac"
+            android:layout_weight="1"
+            android:elevation="1dp"
+            android:layout_gravity="right"
+            app:buttonTint="@android:color/background_light"
+            android:textColor="@android:color/background_light"
+            android:checked="false"/>
+
+
     </LinearLayout>
 
 
@@ -40,7 +67,7 @@
         android:id="@+id/infoText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Si no hay dispositivos en la lista, por favor enlaza tu dispositivo en la configuración de Android"
+        android:text="Si no hay dispositivos, por favor ve al Menú de opciónes-Buscar dispositivos"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_margin="5dp"
         android:textSize="18dp" />
@@ -49,6 +76,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center">
+
 
     </LinearLayout>
 

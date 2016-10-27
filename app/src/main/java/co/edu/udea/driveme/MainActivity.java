@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -30,11 +31,10 @@ import bluetooth.ConnectedThread;
 import joystick.JoystickMovedListener;
 import joystick.JoystickView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener,DeviceListDialog.RecibirDatos {
+public class MainActivity extends AppCompatActivity implements DeviceListDialog.RecibirDatos {
 
     private final int DURATION = 150;
     private JoystickView mJoystick;
-    //private TextView mTxtDataL;
     private boolean mCenterL = true;
     private double mRadiusL = 0;
     private double mAngleL = 0;
@@ -43,30 +43,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private BluetoothSocket btSocket = null;
     private ConnectedThread connectedThread;
     private ImageView imageView;
-    public TextView andando, parado, flechita,txt_envoltorio, mTxtDataL, txt_temperatura, txt_distancia, txt_humedad ;
+    private TextView andando, parado, flechita,txt_envoltorio, mTxtDataL, txt_temperatura, txt_distancia, txt_humedad ;
     public static List<String> dispositivos;
-    RelativeLayout relativeLayout;
+    public static List<String> nombresDispositivos;
+    private RelativeLayout relativeLayout;
     //SPP UUID service
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     //Aquí se guardara la dirección MAC
     private static String address = null;
     //public TextView txt_envoltorio;
-    public ProgressBar progressBar;
+    private ProgressBar progressBar;
+    TextView t;
+    TextView y;
 
     private StringBuilder recDataString = new StringBuilder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
+        relativeLayout = (RelativeLayout) findViewById(R.id.envoltorio);
+        txt_envoltorio = (TextView) findViewById(R.id.tvEnvuelto);
+        flechita = (TextView)findViewById(R.id.flechita);
+        t = (TextView) findViewById(R.id.mac);
+        y = (TextView) findViewById(R.id.name);
+
         encontrarGraficos();
-
-
         read();
-
 
         //Se ponen los marcadores de movimiento en la posición inicial
         parado.setAlpha(1);
@@ -92,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         parado = (TextView) findViewById(R.id.parado);
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         dispositivos = new ArrayList<String>();
+        nombresDispositivos = new ArrayList<String>();
         txt_envoltorio = (TextView)findViewById(R.id.tvEnvuelto);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         txt_distancia=(TextView) findViewById(R.id.txt_distancia);
@@ -221,7 +226,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         connectDevice();
         read();
 
-
         /*
 
         address = getIntent().getStringExtra(DeviceListDialog.EXTRA_DEVICE_ADDRESS);
@@ -278,26 +282,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //address = getIntent().getStringExtra(DeviceListDialog.EXTRA_DEVICE_ADDRESS);
 
         if (address != null) {
-            relativeLayout = (RelativeLayout) findViewById(R.id.envoltorio);
-            relativeLayout.setVisibility(View.GONE);
-
-
-            TextView t = (TextView) findViewById(R.id.mac);
-            TextView y = (TextView) findViewById(R.id.name);
             BluetoothDevice device = btAdapter.getRemoteDevice(address);
-
-            t.setText(address);
 
             try {
                 btSocket = createBluetoothSocket(device);
-                y.setText(btSocket.getRemoteDevice().getName());
-            } catch (IOException e) {
+            }catch (IOException e) {
                 Toast.makeText(getBaseContext(), "La creacción del Socket fallo", Toast.LENGTH_LONG).show();
             }
 
             // Se establece la conexión Bluetooth por medio del Socket
             try {
                 btSocket.connect();
+
                 System.out.println("El socket se conecta: "+btSocket.isConnected());
 
             } catch (IOException e) {
@@ -344,6 +340,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //Do something if connected
                 // address=BluetoothDevice.
                 address = device.getAddress();
+
+                relativeLayout.setVisibility(View.GONE);
+
+                t.setText(address);
+                y.setText(btSocket.getRemoteDevice().getName());
+
                 Toast.makeText(getApplicationContext(), "BT Connected", Toast.LENGTH_SHORT).show();
             } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
                 //Do something if disconnected
@@ -354,12 +356,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // Acciones a realizar al descubrir un nuevo dispositivo
                 BluetoothDevice dispositivo = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 dispositivos.add(dispositivo.getName() + "\n" + dispositivo.getAddress());
+                nombresDispositivos.add(dispositivo.getName());
             }
             // Codigo que se ejecutara cuando el Bluetooth finalice la busqueda de dispositivos.
             else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 // Acciones a realizar al finalizar el proceso de descubrimiento
+
+                progressBar.setVisibility(View.GONE);
+                flechita.setVisibility(View.VISIBLE);
+                txt_envoltorio.setText("Seleccione un dispositivo Bluetooth, por favor.");
                 DialogFragment dialog = new DeviceListDialog();
                 dialog.show(getSupportFragmentManager(), "Lista de dispositivos.");
+
             }
         }
     };
@@ -375,6 +383,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int id = item.getItemId();
 
         if (id == R.id.connect) {
+
+            progressBar.setVisibility(View.GONE);
+            flechita.setVisibility(View.VISIBLE);
+            relativeLayout.setVisibility(View.VISIBLE);
             DialogFragment dialog = new DeviceListDialog();
             dialog.show(getSupportFragmentManager(), "Lista de dispositivos.");
         } else if (id == R.id.close) {
@@ -382,17 +394,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else if (id == R.id.search){
             if(dispositivos != null)
                 dispositivos.clear();
+                nombresDispositivos.clear();
             // Comprobamos si existe un descubrimiento en curso. En caso afirmativo, se cancela.
             if(btAdapter.isDiscovering())
                 btAdapter.cancelDiscovery();
 
             // Iniciamos la busqueda de dispositivos y mostramos el mensaje de que el proceso ha comenzado
             if(btAdapter.startDiscovery()) {
-                relativeLayout = (RelativeLayout) findViewById(R.id.envoltorio);
+
                 relativeLayout.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.VISIBLE);
-                txt_envoltorio = (TextView) findViewById(R.id.tvEnvuelto);
-                flechita = (TextView)findViewById(R.id.flechita);
                 flechita.setVisibility(View.GONE);
 
                 Toast.makeText(this, "Iniciando búsqueda de dispositivos bluetooth.\n " +
@@ -406,12 +417,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
-    public void nothing(View view) {
-    }
-
-    @Override
-    public void onClick(View v) {
-    }
 
     public void read(){
         bluetoothIn = new Handler() {
@@ -441,7 +446,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             txt_temperatura.setText("Error al leer la temperatura");
                             txt_humedad.setText("Error al leer la humedad");
                         }
-
 
 
                         /*
@@ -487,6 +491,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             System.out.println("trato de cerrarlo en el dialog");
         }catch (NullPointerException nu ){
             System.out.println("trato de cerrarlo en el dialog pero soy nulo");
+
+            Toast.makeText(getApplicationContext(), "No se pudo conectar\nvuelva a intentarlo.", Toast.LENGTH_LONG).show();
         }
         return false;
     }

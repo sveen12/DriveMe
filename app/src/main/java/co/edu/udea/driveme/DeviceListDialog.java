@@ -22,10 +22,13 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class DeviceListDialog extends DialogFragment {
@@ -33,6 +36,9 @@ public class DeviceListDialog extends DialogFragment {
     // Debugging for LOGCAT
     private static final String TAG = "DeviceListActivity";
     private static final boolean D = true;
+    private CheckBox checkBox;
+    private ProgressBar progressBar;
+
 
 
     // declare button for launching website and textview for connection status
@@ -44,6 +50,8 @@ public class DeviceListDialog extends DialogFragment {
     // Member fields
     private BluetoothAdapter mBtAdapter;
     public static ArrayAdapter mPairedDevicesArrayAdapter;
+    public static ArrayAdapter nombresDispositivos;
+    public ListView pairedListView;
 
     public interface RecibirDatos{
         public void deviceMac(String address);
@@ -62,7 +70,7 @@ public class DeviceListDialog extends DialogFragment {
 
     // Set up on-click listener for the list (nicked this - unsure)
      private AdapterView.OnItemClickListener mDeviceClickListener = new AdapterView.OnItemClickListener() {
-        public void onItemClick(AdapterView av, View v, int arg2, long arg3) {
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
 
 
             /*
@@ -72,13 +80,16 @@ public class DeviceListDialog extends DialogFragment {
             // Make an intent to start next activity while taking an extra which is the MAC address.
             //MainActivity.EXTRA_DEVICE_ADDRESS = address;
             if (MainActivity.DEVICE_CONNECTED==true) {*/
-                v.setBackgroundColor(Color.parseColor("#CC666666"));
+                view.setBackgroundColor(Color.parseColor("#CC666666"));
+                progressBar.setVisibility(View.VISIBLE);
                 // Get the device MAC address, which is the last 17 chars in the View
 
-                String info = ((TextView) v).getText().toString();
+
+                String info = mPairedDevicesArrayAdapter.getItem(position).toString();
                 String address = info.substring(info.length() - 17);
-            recibirDatos.deviceMac(address);
-            dismiss();
+
+                recibirDatos.deviceMac(address);
+                dismiss();
             /*
                 Intent i = new Intent(getActivity(), MainActivity.class);
                 i.putExtra(EXTRA_DEVICE_ADDRESS, address);
@@ -92,6 +103,7 @@ public class DeviceListDialog extends DialogFragment {
 
     public static void addBTDevice(String device){
         mPairedDevicesArrayAdapter.add(device);
+        nombresDispositivos.add(device);
     }
 
     @Nullable
@@ -106,13 +118,27 @@ public class DeviceListDialog extends DialogFragment {
         textView1 = (TextView) view.findViewById(R.id.connecting);
         textView1.setTextSize(40);
         textView1.setText(" ");
+        checkBox = (CheckBox) view.findViewById(R.id.cbMac);
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBarDialog);
+
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                if(isChecked){
+                    pairedListView.setAdapter(mPairedDevicesArrayAdapter);
+                }else{
+                    pairedListView.setAdapter(nombresDispositivos);
+                }
+            }
+        });
 
         // Initialize array adapter for paired devices
         mPairedDevicesArrayAdapter = new ArrayAdapter(view.getContext(), R.layout.device_name);
+        nombresDispositivos = new ArrayAdapter(view.getContext(), R.layout.device_name);
 
         // Find and set up the ListView for paired devices
-        ListView pairedListView = (ListView) view.findViewById(R.id.paired_devices);
-        pairedListView.setAdapter(mPairedDevicesArrayAdapter);
+        pairedListView = (ListView) view.findViewById(R.id.paired_devices);
+        pairedListView.setAdapter(nombresDispositivos);
         pairedListView.setOnItemClickListener(mDeviceClickListener);
 
         // Get the local Bluetooth adapter
@@ -127,15 +153,18 @@ public class DeviceListDialog extends DialogFragment {
 
             for (BluetoothDevice device : pairedDevices) {
                 mPairedDevicesArrayAdapter.add(device.getName()+ "\n" + device.getAddress());
+                nombresDispositivos.add(device.getName());
             }
             if(MainActivity.dispositivos!=null && MainActivity.dispositivos.size()!=0){
                 for(int i =0; i<MainActivity.dispositivos.size();i++){
                     mPairedDevicesArrayAdapter.add(MainActivity.dispositivos.get(i));
+                    nombresDispositivos.add(MainActivity.nombresDispositivos.get(i));
                 }
             }
         } else {
             String noDevices = "Ningún dispositivo pudo ser emparejado";
             mPairedDevicesArrayAdapter.add(noDevices);
+            nombresDispositivos.add(noDevices);
         }
 
         return view;
