@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -216,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements DeviceListDialog.
     @Override
     public void onDestroy() {
         unregisterReceiver(BTReceiver);
-        cerrrarConexion();
+        cerrarConexion();
 
         super.onDestroy();
     }
@@ -299,7 +298,7 @@ public class MainActivity extends AppCompatActivity implements DeviceListDialog.
                 System.out.println("El socket se conecta: "+btSocket.isConnected());
 
             } catch (IOException e) {
-                cerrrarConexion();
+                cerrarConexion();
                 /*
                 try {
                     btSocket.close();
@@ -427,16 +426,9 @@ public class MainActivity extends AppCompatActivity implements DeviceListDialog.
                     String readMessage = (String) msg.obj;                                                                // msg.arg1 = bytes from connect thread
                     recDataString.append(readMessage);                                      //keep appending to string until ~
 
-                    //esto fue lo que hice
-                    //String lale =(String) msg.obj;
-                    //String[] variables = lale.split("~");
-                    //System.out.println("la lechuza   "+ lale );
-                    //int tamanio = variables.length;
-                    //System.out.println("Pesa tanto   " +  tamanio);
-
                     int endOfLineIndex = recDataString.indexOf("\n");                    // determine the end-of-line
                     if (endOfLineIndex > 0) {                                           // make sure there data before ~
-                    //if(tamanio>0){
+
                         String dataInPrint = recDataString.substring(0, endOfLineIndex);    // extract string
                         String[] variables = dataInPrint.split("~");
                         txt_distancia.setText(variables[0]);
@@ -448,28 +440,7 @@ public class MainActivity extends AppCompatActivity implements DeviceListDialog.
                             txt_humedad.setText(variables[2]);
                         }
 
-
-                        /*
-                        String dataInPrint = recDataString.substring(0, endOfLineIndex);    // extract string
-                        txtString.setText("Data Received = " + dataInPrint);
-                        int dataLength = dataInPrint.length();                          //get length of data received
-                        txtStringLength.setText("String Length = " + String.valueOf(dataLength));
-
-                        if (recDataString.charAt(0) == '#')                             //if it starts with # we know it is what we are looking for
-                        {
-                            String sensor0 = recDataString.substring(1, 5);             //get sensor value from string between indices 1-5
-                            String sensor1 = recDataString.substring(6, 10);            //same again...
-                            String sensor2 = recDataString.substring(11, 15);
-                            String sensor3 = recDataString.substring(16, 20);
-
-                            sensorView0.setText(" Sensor 0 Voltage = " + sensor0 + "V");    //update the textviews with sensor values
-                            sensorView1.setText(" Sensor 1 Voltage = " + sensor1 + "V");
-                            sensorView2.setText(" Sensor 2 Voltage = " + sensor2 + "V");
-                            sensorView3.setText(" Sensor 3 Voltage = " + sensor3 + "V");
-                        }*/
                         recDataString.delete(0, recDataString.length());                    //clear all string data
-                        // strIncom =" ";
-                        dataInPrint = " ";
                     }
                 }
             }
@@ -478,12 +449,12 @@ public class MainActivity extends AppCompatActivity implements DeviceListDialog.
 
     @Override
     public void deviceMac(String address) {
-       cerrrarConexion();
+       cerrarConexion();
         this.address=address;
         connectDevice();
 
     }
-    public boolean cerrrarConexion(){
+    public boolean cerrarConexion(){
         try {
             btSocket.close();
             return true;
@@ -496,5 +467,9 @@ public class MainActivity extends AppCompatActivity implements DeviceListDialog.
             Toast.makeText(getApplicationContext(), "No se pudo conectar\nvuelva a intentarlo.", Toast.LENGTH_LONG).show();
         }
         return false;
+    }
+
+    //No eliminar este método
+    public void nothing(View view) {
     }
 }
