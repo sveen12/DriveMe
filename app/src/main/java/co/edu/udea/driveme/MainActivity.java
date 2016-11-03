@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +34,7 @@ import joystick.JoystickView;
 
 public class MainActivity extends AppCompatActivity implements DeviceListDialog.RecibirDatos {
 
+    private final String TAG= "mainActivity.class";
     private final int DURATION = 150;
     private JoystickView mJoystick;
     private boolean mCenterL = true;
@@ -438,13 +440,12 @@ public class MainActivity extends AppCompatActivity implements DeviceListDialog.
                         String dataInPrint = recDataString.substring(0, endOfLineIndex);    // extract string
                         String[] variables = dataInPrint.split("~");
                         txt_distancia.setText(variables[0]);
+                        Log.e(TAG,recDataString.toString());
+                        Log.e(TAG,String.valueOf(variables.length));
 
-                        if(!"".equals(variables[1])) {
+                        if(variables.length>2) {
                             txt_temperatura.setText(variables[1]);
                             txt_humedad.setText(variables[2]);
-                        }else{
-                            txt_temperatura.setText("Error al leer la temperatura");
-                            txt_humedad.setText("Error al leer la humedad");
                         }
 
 
