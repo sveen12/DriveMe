@@ -7,10 +7,14 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:id="@+id/linear_principal"
-        android:background="@drawable/patronrepeat">
+        android:id="@+id/llPrincipal"
+        android:background="@drawable/patronrepeat"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
 
         <TextView
             android:layout_width="wrap_content"
@@ -18,10 +22,36 @@
             android:layout_marginTop="20dp"
             android:text="Control Shield Bot"
             android:textColor="@android:color/black"
-            android:layout_marginBottom="10dp"
             android:layout_gravity="center_horizontal"
             android:textSize="30dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:id="@+id/textView" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Activar sensores:"
+                android:paddingLeft="20dp"
+                android:layout_gravity="center"
+                android:gravity="right|center_vertical"
+                android:textStyle="bold" />
+
+
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:id="@+id/swSensores" />
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="•"
-                android:id="@+id/andando"
+                android:id="@+id/tvAndando"
                 android:layout_weight="1"
                 android:gravity="center_horizontal|center_vertical"
                 android:textColor="#00f51d"
@@ -48,7 +78,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="•"
-                android:id="@+id/parado"
+                android:id="@+id/tvParado"
                 android:layout_weight="1"
                 android:gravity="center_horizontal|center_vertical"
                 android:textColor="#ff0000"
@@ -59,31 +89,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Distania"
-            android:id="@+id/txt_distancia"
+            android:text="Distancia: No medida"
+            android:id="@+id/tvDistancia"
             android:layout_gravity="center_horizontal"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Temperatura"
-            android:id="@+id/txt_temperatura"
+            android:text="Temperatura: No medida"
+            android:id="@+id/tvTemperatura"
             android:layout_gravity="center_horizontal"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Humedad"
-            android:id="@+id/txt_humedad"
+            android:text="Humedad: No medida"
+            android:id="@+id/tvHumedad"
             android:layout_gravity="center_horizontal"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="(0 , 0)"
-            android:id="@+id/txt_dataL"
+            android:id="@+id/tvRadioAngulo"
             android:layout_gravity="center_horizontal"/>
 
         <joystick.JoystickView
@@ -96,15 +126,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_gravity="center_horizontal"
-            android:textSize="20dp"
+            android:textSize="15sp"
             android:textStyle="bold"
-            android:id="@+id/name"/>
+            android:id="@+id/tvName"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:textSize="20dp"
-            android:id="@+id/mac" />
+            android:textSize="15sp"
+            android:id="@+id/tvMac"
+            android:layout_marginBottom="20dp"/>
 
     </LinearLayout>
 
@@ -113,9 +144,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#b4252525"
-        android:weightSum="1"
-        android:id="@+id/envoltorio"
-        android:onClick="nothing"
+        android:id="@+id/rlEnvoltorio"
         android:clickable="true">
 
         <TextView
@@ -127,15 +156,14 @@
             android:textSize="26dp"
             android:layout_gravity="center_vertical"
             android:gravity="center_horizontal"
-            android:layout_weight="0.91"
-            android:layout_below="@+id/flechita"
+            android:layout_below="@+id/tvFlecha"
             android:layout_centerHorizontal="true" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="➚"
-            android:id="@+id/flechita"
+            android:id="@+id/tvFlecha"
             android:textSize="80dp"
             android:textColor="#ffffff"
             android:layout_alignParentTop="true"
@@ -153,4 +181,5 @@
             android:layout_centerHorizontal="true"
             android:indeterminate="false" />
     </RelativeLayout>
+
 </RelativeLayout>
